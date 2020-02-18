@@ -3,23 +3,23 @@ from PIL import ImageTk, Image
 from time import sleep
 
 class tag:
-    tagDiameter = 35
-    squareSideLength = 40
-    center = (squareSideLength/2)-(tagDiameter/2)
-    thing = 0
-
+    inch = 3.33 #1200(pixels in 30 feet)/360(inches in 30 feet)
+    size = 25
     def __init__(self, name, x, y, imageName, canvas):
         self.name = name
         self.x = x
         self.y = y
-        self.imageObject = ImageTk.PhotoImage(Image.open(imageName))
-        self.thing = canvas.create_image(((self.x-1)*self.squareSideLength)+self.center+2, ((self.y-1)*self.squareSideLength)+self.center+2, anchor=NW, image=self.imageObject)
-    
+        self.image = Image.open(imageName)
+        self.resizedImage = self.image.resize((self.size,self.size), Image.ANTIALIAS)
+        self.imageObject = ImageTk.PhotoImage(self.resizedImage)
+        self.thing = canvas.create_image((self.x*self.inch), (self.y*self.inch), anchor=NW, image=self.imageObject)
+        self.inch = 3.33
+
     def setCoords(self, x, y):
         self.x = x
         self.y = y
         print(self.name + " x: " + str(x))
         print(self.name + " y: " + str(y))
-    
+
     def updatePosition(self, canvas):
-        canvas.coords(self.thing, ((self.x-1)*self.squareSideLength)+self.center+2, ((self.y-1)*self.squareSideLength)+self.center+2)
+        canvas.coords(self.thing, (self.x*self.inch)-10, (self.y*self.inch)-10)
