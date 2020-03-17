@@ -5,6 +5,7 @@ from PIL import ImageTk, Image
 import threading
 from time import sleep
 import math
+import datetime
 
 import csv
 
@@ -17,9 +18,11 @@ t4name = "Jacob Beach"
 t5name = "Zephan Spencer"
 t6name = "Captain Dirk Diggler"
 
+nanCounts = [0,0,0,0,0,0]
+
 #Main UI Elements
 root = Tk()
-root.geometry('1220x600')
+root.geometry('1220x650')
 
 c = Canvas(root, height=320, width=1200, bg="white")
 bg = ImageTk.PhotoImage(Image.open("bg.png"))
@@ -27,28 +30,32 @@ c.create_image(2,2, anchor=NW, image=bg)
 c.pack(side = TOP)
 
 #UI Widgets
-progress = Progressbar(root, orient = HORIZONTAL, length = 1200, mode = 'determinate')
+progress = Scale(root, orient = HORIZONTAL, length = 1200, showvalue=0)
 
 numlines = 1
 state = "live"
+paused = True
 
 t1Label = Label(root, text=t1name, font=("Helvetica", 18))
-t1Label.place(x = 50, y = 350 + 5)
+t1Label.place(x = 50, y = 400 + 5)
 
 t2Label = Label(root, text=t2name, font=("Helvetica", 18))
-t2Label.place(x = 50, y = 350 + 45)
+t2Label.place(x = 50, y = 400 + 45)
 
 t3Label = Label(root, text=t3name, font=("Helvetica", 18))
-t3Label.place(x = 50, y = 350 + 85)
+t3Label.place(x = 50, y = 400 + 85)
 
 t4Label = Label(root, text=t4name, font=("Helvetica", 18))
-t4Label.place(x = 50, y = 350 + 125)
+t4Label.place(x = 50, y = 400 + 125)
 
 t5Label = Label(root, text=t5name, font=("Helvetica", 18))
-t5Label.place(x = 50, y = 350 + 165)
+t5Label.place(x = 50, y = 400 + 165)
 
 t6Label = Label(root, text=t6name, font=("Helvetica", 18))
-t6Label.place(x = 50, y = 350 + 205)
+t6Label.place(x = 50, y = 400 + 205)
+
+timeLabel = Label(root, text="00:00:00")
+timeLabel.place(x=5, y=350)
 
 def changeNamesButtonCallBack():
     top = Toplevel()
@@ -105,11 +112,20 @@ def changeNamesButtonCallBack():
 def helloCallBack():
    print("yay")
 
-progress['value'] = 100
+def playPauseCallBack():
+    global paused
+    if paused:
+        paused = False
+    else:
+        paused = True
+    print(paused)
+
+progress.set(100)
 
 #UI Buttons
 crewNameButton = Button(root, text ="Change Crew Names", command = changeNamesButtonCallBack)
 exportButton = Button(root, text = "Export To Flash Drive", command = helloCallBack)
+pauseButton = Button(root, text = "Play/Pause", command = playPauseCallBack)
 
 #Read configuration data
 with open("config.csv", 'r', encoding='utf-8-sig') as configFile:
@@ -142,30 +158,151 @@ with open("config.csv", 'r', encoding='utf-8-sig') as configFile:
     #TODO: Read in names
 
 #TODO: Add version for live version https://stackoverflow.com/questions/3346430/what-is-the-most-efficient-way-to-get-first-and-last-line-of-a-text-file
-def moveAndUpdate():
-    with open("data.csv", 'r', encoding='utf-8-sig') as csvFile:
-        csvReader = csv.reader(csvFile, delimiter=',')
-        count = 0
-        for row in csvReader:
-            count = count + 1
-            progress['value'] = (count/numlines)*100
+def moveAndUpdate(row):
+    # Collect Position Data
+    try:
+        x1 = row[0]
+    except IndexError:
+        x1 = -50
+    try:
+        y1 = row[1]
+    except IndexError:
+        y1 = -50
+    try:
+        x2 = row[2]
+    except IndexError:
+        x2 = -50
+    try:
+        y2 = row[3]
+    except IndexError:
+        y2 = -50
+    try:
+        x3 = row[4]
+    except IndexError:
+        x3 = -50
+    try:
+        y3 = row[5]
+    except IndexError:
+        y3 = -50
+    try:
+        x4 = row[6]
+    except IndexError:
+        x4 = -50
+    try:
+        y4 = row[7]
+    except IndexError:
+        y4 = -50
+    try:
+        x5 = row[8]
+    except IndexError:
+        x5 = -50
+    try:
+        y5 = row[9]
+    except IndexError:
+        y5 = -50
+    try:
+        x6 = row[10]
+    except IndexError:
+        x6 = -50
+    try:
+        y6 = row[11]
+    except IndexError:
+        y6 = -50
 
-            tag1.setCoords(int(row[0]), int(row[1]))
-            tag2.setCoords(int(row[2]), int(row[3]))
-            tag3.setCoords(int(row[4]), int(row[5]))
-            tag4.setCoords(int(row[6]), int(row[7]))
-            tag5.setCoords(int(row[8]), int(row[9]))
-            tag6.setCoords(int(row[10]), int(row[11]))
+    #Update tag 1
+    if (x1 == "NaN" or y1 == "NaN") and nanCounts[0] < 50:
+        nanCounts[0] = nanCounts[0] + 1
+    elif (x1 == "NaN" or y1 == "NaN") and nanCounts[0] >= 50:
+        #Tag is missing
+        t1Label["text"] = t1name + " (Missing)"
+    else:
+        nanCounts[0] = 0
+        tag1.setCoords(int(x1), int(y1))
+        tag1.updatePosition(c)
+        t1Label["text"] = t1name
 
-            tag1.updatePosition(c)
-            tag2.updatePosition(c)
-            tag3.updatePosition(c)
-            tag4.updatePosition(c)
-            tag5.updatePosition(c)
-            tag6.updatePosition(c)
+    #Update tag 2
+    if (x2 == "NaN" or y2 == "NaN") and nanCounts[1] < 50:
+        nanCounts[1] = nanCounts[1] + 1
+    elif (x2 == "NaN" or y2 == "NaN") and nanCounts[1] >= 50:
+        #Tag is missing
+        t2Label["text"] = t2name + " (Missing)"
+    else:
+        nanCounts[1] = 0
+        tag2.setCoords(int(x2), int(y2))
+        tag2.updatePosition(c)
+        t2Label["text"] = t2name
 
-            root.update()
-            sleep(0.1)
+    #Update tag 3
+    if (x3 == "NaN" or y3 == "NaN") and nanCounts[2] < 50:
+        nanCounts[2] = nanCounts[2] + 1
+    elif (x3 == "NaN" or y3 == "NaN") and nanCounts[2] >= 50:
+        #Tag is missing
+        t3Label["text"] = t3name + " (Missing)"
+    else:
+        nanCounts[2] = 0
+        tag3.setCoords(int(x3), int(y3))
+        tag3.updatePosition(c)
+        t3Label["text"] = t3name
+
+    #Update tag 4
+    if (x4 == "NaN" or y4 == "NaN") and nanCounts[3] < 50:
+        nanCounts[3] = nanCounts[3] + 1
+    elif (x4 == "NaN" or y4 == "NaN") and nanCounts[3] >= 50:
+        #Tag is missing
+        t4Label["text"] = t4name + " (Missing)"
+    else:
+        nanCounts[3] = 0
+        tag4.setCoords(int(x4), int(y4))
+        tag4.updatePosition(c)
+        t4Label["text"] = t4name
+
+    #Update tag 5
+    if (x5 == "NaN" or y5 == "NaN") and nanCounts[4] < 50:
+        nanCounts[4] = nanCounts[4] + 1
+    elif (x5 == "NaN" or y5 == "NaN") and nanCounts[4] >= 50:
+        #Tag is missing
+        t5Label["text"] = t5name + " (Missing)"
+    else:
+        nanCounts[4] = 0
+        tag5.setCoords(int(x5), int(y5))
+        tag5.updatePosition(c)
+        t5Label["text"] = t5name
+
+    #Update tag 5
+    if (x6 == "NaN" or y6 == "NaN") and nanCounts[5] < 50:
+        nanCounts[5] = nanCounts[5] + 1
+    elif (x6 == "NaN" or y6 == "NaN") and nanCounts[5] >= 50:
+        #Tag is missing
+        t6Label["text"] = t6name + " (Missing)"
+    else:
+        nanCounts[5] = 0
+        tag6.setCoords(int(x6), int(y6))
+        tag6.updatePosition(c)
+        t6Label["text"] = t6name
+
+    root.update()
+
+def runtimeLoop():
+    if state == "live": #Live mode
+        print("yay")
+    else: #Replay mode
+        currentRow = 0
+        with open("data.csv", 'r', encoding='utf-8-sig') as csvFile:
+            csvReader = csv.reader(csvFile, delimiter=',')
+            data = list(csvReader)
+            progress["to"] = numlines
+            while True:
+                d = datetime.timedelta(milliseconds=currentRow*100)
+                timeLabel["text"] = d
+                if currentRow < numlines and not paused:
+                    currentRow = currentRow + 1
+                    progress.set(currentRow)
+                    moveAndUpdate(data[currentRow])
+                    sleep(0.1) #100ms update time
+                elif currentRow < numlines and paused:
+                    currentRow = progress.get()
+                    moveAndUpdate(data[currentRow])
 
 tag1 = tag(t1name, 5, 5, "t1.png", c)
 tag2 = tag(t2name, 20, 3, "t2.png", c)
@@ -181,13 +318,14 @@ cLegend.create_image(5,85, anchor = NW, image=tag3.imageObject)
 cLegend.create_image(5,125, anchor = NW, image=tag4.imageObject)
 cLegend.create_image(5,165, anchor = NW, image=tag5.imageObject)
 cLegend.create_image(5,205, anchor = NW, image=tag6.imageObject)
-cLegend.place(x=0, y=350, anchor=NW)
+cLegend.place(x=0, y=400, anchor=NW)
 
-t1 = threading.Thread(target=moveAndUpdate, args=())
+t1 = threading.Thread(target=runtimeLoop, args=())
 
 t1.start()
 #c.pack()
 progress.pack(pady = 5)
 crewNameButton.pack()
 exportButton.pack()
+pauseButton.pack()
 root.mainloop()
