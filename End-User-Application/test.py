@@ -35,6 +35,7 @@ progress = Scale(root, orient = HORIZONTAL, length = 1200, showvalue=0)
 numlines = 1
 state = "live"
 paused = True
+numTags = 0
 
 t1Label = Label(root, text=t1name, font=("Helvetica", 18))
 t1Label.place(x = 50, y = 400 + 5)
@@ -59,7 +60,7 @@ timeLabel.place(x=5, y=350)
 
 def changeNamesButtonCallBack():
     top = Toplevel()
-    top.title("About this application...")
+    top.title("Change Tag Names")
     Label(top, text="Tag 1").grid(row=0)
     Label(top, text="Tag 2").grid(row=1)
     Label(top, text="Tag 3").grid(row=2)
@@ -150,13 +151,27 @@ with open("config.csv", 'r', encoding='utf-8-sig') as configFile:
             t4Label["text"] = t4name
             t5Label["text"] = t5name
             t6Label["text"] = t6name
-            with open("data.csv", 'r', encoding='utf-8-sig') as csvFile:
+            with open("test2electricboogaloo.csv", 'r', encoding='utf-8-sig') as csvFile:
                 dataReader = csv.reader(csvFile, delimiter=',')
                 numlines = sum(1 for line in dataReader)
                 csvFile.close()
 
     #TODO: Read in names
 
+def checkNumTags():
+    with open("test2electricboogaloo.csv", 'r', encoding='utf-8-sig') as csvFile:
+        dataReader = csv.reader(csvFile, delimiter=',')
+        seenZero = False
+        numTags = 0
+        for line in dataReader:
+            if line[1] == "0":
+                if seenZero == True:
+                    return numTags
+                else:
+                    seenZero = True
+            numTags = numTags + 1
+
+        csvFile.close()
 #TODO: Add version for live version https://stackoverflow.com/questions/3346430/what-is-the-most-efficient-way-to-get-first-and-last-line-of-a-text-file
 def moveAndUpdate(row):
     # Collect Position Data
@@ -210,74 +225,74 @@ def moveAndUpdate(row):
         y6 = -50
 
     #Update tag 1
-    if (x1 == "NaN" or y1 == "NaN") and nanCounts[0] < 50:
+    if (x1 == "nan" or y1 == "nan") and nanCounts[0] < 50:
         nanCounts[0] = nanCounts[0] + 1
-    elif (x1 == "NaN" or y1 == "NaN") and nanCounts[0] >= 50:
+    elif (x1 == "nan" or y1 == "nan") and nanCounts[0] >= 50:
         #Tag is missing
         t1Label["text"] = t1name + " (Missing)"
     else:
         nanCounts[0] = 0
-        tag1.setCoords(int(x1), int(y1))
+        tag1.setCoords(float(x1), float(y1))
         tag1.updatePosition(c)
         t1Label["text"] = t1name
 
     #Update tag 2
-    if (x2 == "NaN" or y2 == "NaN") and nanCounts[1] < 50:
+    if (x2 == "nan" or y2 == "nan") and nanCounts[1] < 50:
         nanCounts[1] = nanCounts[1] + 1
-    elif (x2 == "NaN" or y2 == "NaN") and nanCounts[1] >= 50:
+    elif (x2 == "nan" or y2 == "nan") and nanCounts[1] >= 50:
         #Tag is missing
         t2Label["text"] = t2name + " (Missing)"
     else:
         nanCounts[1] = 0
-        tag2.setCoords(int(x2), int(y2))
+        tag2.setCoords(float(x2), float(y2))
         tag2.updatePosition(c)
         t2Label["text"] = t2name
 
     #Update tag 3
-    if (x3 == "NaN" or y3 == "NaN") and nanCounts[2] < 50:
+    if (x3 == "nan" or y3 == "nan") and nanCounts[2] < 50:
         nanCounts[2] = nanCounts[2] + 1
-    elif (x3 == "NaN" or y3 == "NaN") and nanCounts[2] >= 50:
+    elif (x3 == "nan" or y3 == "nan") and nanCounts[2] >= 50:
         #Tag is missing
         t3Label["text"] = t3name + " (Missing)"
     else:
         nanCounts[2] = 0
-        tag3.setCoords(int(x3), int(y3))
+        tag3.setCoords(int(float(x3)), int(float(y3)))
         tag3.updatePosition(c)
         t3Label["text"] = t3name
 
     #Update tag 4
-    if (x4 == "NaN" or y4 == "NaN") and nanCounts[3] < 50:
+    if (x4 == "nan" or y4 == "nan") and nanCounts[3] < 50:
         nanCounts[3] = nanCounts[3] + 1
-    elif (x4 == "NaN" or y4 == "NaN") and nanCounts[3] >= 50:
+    elif (x4 == "nan" or y4 == "nan") and nanCounts[3] >= 50:
         #Tag is missing
         t4Label["text"] = t4name + " (Missing)"
     else:
         nanCounts[3] = 0
-        tag4.setCoords(int(x4), int(y4))
+        tag4.setCoords(float(x4), float(y4))
         tag4.updatePosition(c)
         t4Label["text"] = t4name
 
     #Update tag 5
-    if (x5 == "NaN" or y5 == "NaN") and nanCounts[4] < 50:
+    if (x5 == "nan" or y5 == "nan") and nanCounts[4] < 50:
         nanCounts[4] = nanCounts[4] + 1
-    elif (x5 == "NaN" or y5 == "NaN") and nanCounts[4] >= 50:
+    elif (x5 == "nan" or y5 == "nan") and nanCounts[4] >= 50:
         #Tag is missing
         t5Label["text"] = t5name + " (Missing)"
     else:
         nanCounts[4] = 0
-        tag5.setCoords(int(x5), int(y5))
+        tag5.setCoords(float(x5), float(y5))
         tag5.updatePosition(c)
         t5Label["text"] = t5name
 
     #Update tag 5
-    if (x6 == "NaN" or y6 == "NaN") and nanCounts[5] < 50:
+    if (x6 == "nan" or y6 == "nan") and nanCounts[5] < 50:
         nanCounts[5] = nanCounts[5] + 1
-    elif (x6 == "NaN" or y6 == "NaN") and nanCounts[5] >= 50:
+    elif (x6 == "nan" or y6 == "nan") and nanCounts[5] >= 50:
         #Tag is missing
         t6Label["text"] = t6name + " (Missing)"
     else:
         nanCounts[5] = 0
-        tag6.setCoords(int(x6), int(y6))
+        tag6.setCoords(float(x6), float(y6))
         tag6.updatePosition(c)
         t6Label["text"] = t6name
 
@@ -285,24 +300,86 @@ def moveAndUpdate(row):
 
 def runtimeLoop():
     if state == "live": #Live mode
-        print("yay")
+        with open("test2electricboogaloo.csv", 'r', encoding='utf-8-sig') as csvFile:
+            csvReader = csv.reader(csvFile, delimiter=',')
+            #data = list(csvReader)
+            #progress["to"] = numlines #FIX THIS FOR MULTIPLE INPUTS
+            while True:
+                #d = datetime.timedelta(milliseconds=currentRow*100)
+                #timeLabel["text"] = d
+                input = csvFile.readline()
+                if input:
+                    #currentRow = currentRow + 1
+                    #progress.set(currentRow)
+                    dataset = ["nan","nan","nan","nan","nan","nan","nan","nan","nan","nan","nan","nan"]
+
+                    line = input.split(",")
+
+                    print(line)
+                    if line[1] == "0":
+                        dataset[0] = line[3]
+                        dataset[1] = line[4]
+                    if line[1] == "1":
+                        dataset[2] = line[3]
+                        dataset[3] = line[4]
+                    if line[1] == "2":
+                        dataset[4] = line[3]
+                        dataset[5] = line[4]
+                    if line[1] == "3":
+                        dataset[6] = line[3]
+                        dataset[7] = line[4]
+                    if line[1] == "4":
+                        dataset[8] = line[3]
+                        dataset[9] = line[4]
+                    if line[1] == "5":
+                        dataset[10] = line[3]
+                        dataset[11] = line[4]
+                    moveAndUpdate(dataset)
+                    sleep(0.02) #20ms update time
+                if not input:
+                    #currentRow = progress.get()
+                    #moveAndUpdate(dataset)
+                    sleep(0.02) #20ms update time
+                    continue
+
     else: #Replay mode
         currentRow = 0
-        with open("data.csv", 'r', encoding='utf-8-sig') as csvFile:
+        with open("test2electricboogaloo.csv", 'r', encoding='utf-8-sig') as csvFile:
             csvReader = csv.reader(csvFile, delimiter=',')
             data = list(csvReader)
-            progress["to"] = numlines
+            progress["to"] = numlines #FIX THIS FOR MULTIPLE INPUTS
             while True:
                 d = datetime.timedelta(milliseconds=currentRow*100)
                 timeLabel["text"] = d
                 if currentRow < numlines and not paused:
                     currentRow = currentRow + 1
                     progress.set(currentRow)
-                    moveAndUpdate(data[currentRow])
+                    dataset = [-50,-50,-50,-50,-50,-50,-50,-50,-50,-50,-50,-50]
+                    for x in range(currentRow, currentRow + numTags):
+                        print(data[x][1])
+                        if data[x][1] == "0":
+                            dataset[0] = data[x][3]
+                            dataset[1] = data[x][4]
+                        if data[x][1] == "1":
+                            dataset[2] = data[x][3]
+                            dataset[3] = data[x][4]
+                        if data[x][1] == "2":
+                            dataset[4] = data[x][3]
+                            dataset[5] = data[x][4]
+                        if data[x][1] == "3":
+                            dataset[6] = data[x][3]
+                            dataset[7] = data[x][4]
+                        if data[x][1] == "4":
+                            dataset[8] = data[x][3]
+                            dataset[9] = data[x][4]
+                        if data[x][1] == "5":
+                            dataset[10] = data[x][3]
+                            dataset[11] = data[x][4]
+                    moveAndUpdate(dataset)
                     sleep(0.1) #100ms update time
                 elif currentRow < numlines and paused:
                     currentRow = progress.get()
-                    moveAndUpdate(data[currentRow])
+                    #moveAndUpdate(dataset)
 
 tag1 = tag(t1name, 5, 5, "t1.png", c)
 tag2 = tag(t2name, 20, 3, "t2.png", c)
@@ -321,7 +398,7 @@ cLegend.create_image(5,205, anchor = NW, image=tag6.imageObject)
 cLegend.place(x=0, y=400, anchor=NW)
 
 t1 = threading.Thread(target=runtimeLoop, args=())
-
+numTags = checkNumTags()
 t1.start()
 #c.pack()
 progress.pack(pady = 5)

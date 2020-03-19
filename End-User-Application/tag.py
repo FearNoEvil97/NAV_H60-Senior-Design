@@ -16,8 +16,8 @@ class tag:
         self.inch = 3.33
 
     def setCoords(self, x, y):
-        self.x = x #Meters to inches conversion *39.3701
-        self.y = y
+        self.x = x*39.3701
+        self.y = y*39.3701
         print(self.name + " x: " + str(x))
         print(self.name + " y: " + str(y))
 
